@@ -1,16 +1,18 @@
 import React,{Component} from 'react';
-import { Platform,StyleSheet, Text, View, StatusBar, Image, TextInput,Div,TouchableOpacity} from 'react-native';
+import { Platform,StyleSheet, Text, View, StatusBar, Image, TextInput,Div,TouchableOpacity,Dimensions} from 'react-native';
 
 
 export default class Form  extends Component<{}>{
   render(){
     return (   
         <View style={styles.container}>  
-           
-            <TextInput style={styles.username} placeholder="Username" placeholderTextColor="white"></TextInput>
-            <TextInput  style={styles.password} secureTextEntry={true}  placeholder="Password" placeholderTextColor="white"></TextInput>
+            {/* <Image source={require('./images/landing.png')} style= {styles.backgroundImage}  ></Image> */}
+            <TextInput style={styles.username} placeholder="Username" placeholderTextColor="white" 
+            selectionColor="white" onSubmitEditing={()=>this.password.focus()}></TextInput>
+            <TextInput  style={styles.password} secureTextEntry={true}  placeholder="Password" 
+            selectionColor="white" placeholderTextColor="white" ref={(input)=>this.password = input} ></TextInput>
             <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>{this.props.type}</Text>
             </TouchableOpacity>
            
         </View>   
@@ -21,16 +23,15 @@ export default class Form  extends Component<{}>{
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    backgroundColor: '#7b1fa2',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    paddingTop:  Dimensions.get("window").height*0.5,
     
   },
+   
   username:{
       width:300,
-      height:35,
+      height:40,
       backgroundColor: 'rgba(255,255,255,0.4)',
       borderRadius:25,
       paddingHorizontal: 16,
@@ -39,13 +40,11 @@ const styles = StyleSheet.create({
   button:{
       width:300,
       marginTop: 20,
-      height:35,
+      height:40,
       backgroundColor: '#54016f',
       borderRadius:25,
       color: 'white',
-      paddingVertical: 5,
-      //marginVertical: 16,
-    
+      justifyContent: 'center',    
   },
   buttonText:{
       color:'white',
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
   password:{
       width:300,
       marginTop: 20,
-      height:35,
+      height:40,
       backgroundColor: 'rgba(255,255,255,0.4)',
       borderRadius:25,
       paddingHorizontal: 16,
