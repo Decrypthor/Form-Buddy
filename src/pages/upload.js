@@ -1,22 +1,21 @@
 import * as React from 'react';
-import { Button, Image, View,TouchableOpacity,StyleSheet,Text,ActivityIndicator } from 'react-native';
+import { Button, Image, View,TouchableOpacity,StyleSheet,Text,ActivityIndicator,document } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
+import Dialog, { DialogContent,SlideAnimation,DialogTitle } from 'react-native-popup-dialog';
 import * as Permissions from 'expo-permissions';
+ 
 
 export default class upload extends React.Component {
 
-
-   
-  closeActivityIndicator = () => setTimeout(() => this.setState({
-  animating: false }), 6000)
-  
-  componentDidMount = () => this.closeActivityIndicator()
-
-
   state = {
     image: null,
-    animating: true ,
+    animating: false ,
+    showUploading: false,
+    myText : "uploading",
+    dialog: false,
+    myFormText: "Your Form is Good :)",
+    showmyFormText: false,
   };
 
   render() {
@@ -24,20 +23,36 @@ export default class upload extends React.Component {
     const animating = this.state.animating;
 
     return (
+      
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+       
+            
           <TouchableOpacity
            style={styles.button }
            onPress={this._pickImage}
             >
-           <Text style={styles.buttonText}>Upload video</Text>
+           <Text   style={styles.buttonText}>Upload video</Text>
            </TouchableOpacity>
-        {image &&
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+         
            <ActivityIndicator
                animating = {animating}
-               color = '#bc2b78'
+               style={{marginTop: 10,paddingTop: 10}}
+               color = '#54016f'
                size = "large"
                 />
+        { this.state.showUploading &&  <Text id="statusText"> {this.state.myText} </Text> }
+        <Dialog
+            visible={this.state.dialog}
+            dialogTitle={<DialogTitle title="FormBuddy" />}
+            dialogAnimation={new SlideAnimation({
+              slideFrom: 'bottom',
+            })}
+          >
+            <DialogContent>
+          { this.state.showmyFormText && <Text id="statusText"> {this.state.myFormText} </Text> }
+            </DialogContent>
+          </Dialog>
       </View>
     );
   }
@@ -45,6 +60,13 @@ export default class upload extends React.Component {
   componentDidMount() {
     this.getPermissionAsync();
     console.log('hi');
+  }
+
+  dialogPush(){
+
+    this.setState({showmyFormText:true, dialog:true}, () => 
+        console.log("mass"));
+
   }
 
   getPermissionAsync = async () => {
@@ -55,6 +77,9 @@ export default class upload extends React.Component {
       }
     }
   }
+
+  
+
 
   _pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -67,6 +92,9 @@ export default class upload extends React.Component {
     console.log(result.uri);
     console.log("testttttt");
 
+    this.state.animating = true;
+    this.state.showUploading=true;
+    this.state.image= null;
 
     const data = new FormData();
     data.append('name', 'testNemdddddd');  
@@ -76,14 +104,24 @@ export default class upload extends React.Component {
     name: 'sample.mp4'
     });
     //https://storage.googleapis.com/upload/storage/v1/b/formbuddy_bucket/o?uploadType=multipart
-    fetch('http://10.26.103.112:5000/test', {
+
+    console.log("singhhhhhhhhhh");
+
+    fetch('http://192.168.1.4:5000/test', {
     method: 'post',
     body: data
-    }).then(res => {
-    console.log(res)
-    });
+    }).then(response => 
+      response.json().then(jsonObj =>{console.log(jsonObj);
+        this.setState({ myText: "Scoring Now"}, () => 
+        setTimeout(() => {
+          this.setState({ showUploading: false,animating:false});
+          this.dialogPush();
+        }, 5000));
+      })
+  );
 
 
+   
  
     if (!result.cancelled) {
       this.setState({ image: result.uri });
@@ -108,11 +146,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#54016f',
     borderRadius:25,
     color: 'white',
-    justifyContent: 'center',    
+    justifyContent: 'center',   
+    marginBottom: 10 
 },
 buttonText:{
     color:'white',
     textAlign: 'center',
     fontSize:16,
+     
 },
 });

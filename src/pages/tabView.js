@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import {Actions} from 'react-native-router-flux';
 import Upload from '../pages/upload'
+ 
 
 const SecondRoute = () => (
   <View style={[styles.scene, { backgroundColor: '#ffffff' }]}>
@@ -164,8 +165,10 @@ login ()  {
     const animating = this.animating
     
     return (
-      <TabView
         
+      
+      <TabView
+        style={{ paddingTop:49}}
         navigationState={this.state}
         renderScene={SceneMap({
           first: FirstRoute,
@@ -177,6 +180,7 @@ login ()  {
             indicatorStyle={{ backgroundColor: 'white' }}
             style={{ backgroundColor: '#54016f' }}
           />
+          
         }
         onIndexChange={index => this.setState({ index })}
         initialLayout={{ width: Dimensions.get('window').width }}
